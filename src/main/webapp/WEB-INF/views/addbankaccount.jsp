@@ -67,8 +67,11 @@
         .submit-btn {
             background-color: blue;
             color: white;
-            padding: 8px 15px;
-            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;          
             cursor: pointer;
             font-size: 16px;
         }
@@ -91,7 +94,8 @@
 <div class="title">Add Bank Account</div>
 
 <div class="form-container">
-    <form:form method="POST" action="/bankaccount/save" modelAttribute="bankAccount">
+   <form:form method="POST" action="addbankaccount" modelAttribute="addbankAccountDto">
+
         <div class="input-group">
          <input type="hidden" name="userId" value="${userId}" />
             <label>Account Number:</label>
@@ -118,8 +122,17 @@
             <label>Is Active (Y/N):</label>
             <form:input path="isActive" cssClass="input" />
         </div>
+        
+         <div class="input-group">
+            <label>Current Balance:</label>
+            <form:input path="currentbalance" cssClass="input" />
+        </div>
 
-        <center><button type="submit" class="submit-btn" value="Save">Submit</button></center>
+      <center>
+	    <button type="submit" name="action" value="save" class="submit-btn">Save</button>
+	    <button type="submit" name="action" value="saveAndClose" class="submit-btn">Save & Close</button>
+     </center>
+
     </form:form>
 
     <a href="/bankaccount/list" class="back-link">Back to Account List</a>

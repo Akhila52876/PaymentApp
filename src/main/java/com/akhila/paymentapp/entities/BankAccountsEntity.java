@@ -18,7 +18,7 @@ public class BankAccountsEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bank_account_id")
-    private Long bankAccountId;
+    private int bankAccountId;
 
     @Column(name = "bank_account_no", nullable = false)
     private String bankAccountNo;
@@ -34,23 +34,36 @@ public class BankAccountsEntity implements Serializable {
 
     @Column(name = "is_active")
     private String isActive;
+    
+    @Column(name="current_balance",nullable=false)
+    private Double currentbalance;
 
     // Many bank accounts can belong to one user
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+	
+
     // --- Getters and Setters ---
 
-    public Long getBankAccountId() {
+    public int getBankAccountId() {
         return bankAccountId;
     }
 
-    public void setBankAccountId(Long bankAccountId) {
+    public void setBankAccountId(int bankAccountId) {
         this.bankAccountId = bankAccountId;
     }
 
-    public String getBankAccountNo() {
+    public Double getCurrentbalance() {
+		return currentbalance;
+	}
+
+	public void setCurrentbalance(Double currentbalnce) {
+		this.currentbalance = currentbalnce;
+	}
+
+	public String getBankAccountNo() {
         return bankAccountNo;
     }
 
@@ -107,6 +120,7 @@ public class BankAccountsEntity implements Serializable {
                 + ", bankName=" + bankName 
                 + ", branchName=" + branchName 
                 + ", isActive=" + isActive 
+                + ", currentbalance=" +currentbalance
                 + ", userId=" + (user != null ? user.getUserid() : "null") + "]";
     }
 }

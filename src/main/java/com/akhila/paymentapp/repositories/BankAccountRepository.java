@@ -9,8 +9,11 @@ import com.akhila.paymentapp.entities.BankAccountsEntity;
 import com.akhila.paymentapp.entities.UserEntity;
 
 @Repository
-public interface BankAccountRepository extends JpaRepository<BankAccountsEntity, Long> {
+public interface BankAccountRepository extends JpaRepository<BankAccountsEntity, Integer> {
     
     // Custom query to get all bank accounts for a specific user
     List<BankAccountsEntity> findByUser(UserEntity user);
+    List<BankAccountsEntity> findByUser_Username(String username);
+
+
 }

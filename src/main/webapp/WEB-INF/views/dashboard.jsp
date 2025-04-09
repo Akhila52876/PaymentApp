@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ page import="java.util.*, com.akhila.paymentapp.entities.BankAccountsEntity" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -144,28 +145,33 @@
             <a href="send_money.jsp" class="btn btn-custom btn-send"><i class="fas fa-paper-plane"></i> Send Money</a>
         </div>
 
-        <!-- Bank Accounts -->
-        <div class="section bank-section">
-            <div class="bank-card">
-                <p><strong><i class="fas fa-building"></i> Bank A</strong></p>
-                <p>Acct No: 1234</p>
-                <p>Balance: --</p>
-                <p>IFSC Code: --</p>
-                <p>Branch: --</p>
-                <a href="editBankAcct.jsp" class="btn btn-custom btn-edit"><i class="fas fa-edit"></i> Edit</a>
-            </div>
-            <div class="bank-card">
-                <p><strong><i class="fas fa-building"></i> Bank B</strong></p>
-                <p>Acct No: 5678</p>
-                <p>Balance: --</p>
-                <p>IFSC Code: --</p>
-                <p>Branch: --</p>
-                <a href="editBankAcct.jsp" class="btn btn-custom btn-edit"><i class="fas fa-edit"></i> Edit</a>
-            </div>
-            <div class="bank-card">
-                <a href="<%= request.getContextPath() %>/bankaccount/addbankaccount" class="btn btn-custom btn-edit"><i class="fas fa-plus-circle"></i> Add Bank </a>
-            </div>
-        </div>
+       <%
+    List<BankAccountsEntity> accounts = (List<BankAccountsEntity>) request.getAttribute("accounts");
+%>
+
+<div class="section bank-section">
+    <%
+        if (accounts != null) {
+            for (BankAccountsEntity account : accounts) {
+    %>
+    <div class="bank-card">
+        <p><strong><i class="fas fa-building"></i> <%= account.getBankName() %></strong></p>
+        <p>Account No: <%= account.getBankAccountNo() %></p>
+        <p>Balance: <%= account.getCurrentbalance() %></p>
+        <p>IFSC Code: <%= account.getIfscCode() %></p>
+        <p>Branch: <%= account.getBranchName() %></p>
+        <a href="editBankAcct.jsp?accountNumber=<%= account.getBankAccountNo() %>" class="btn btn-custom btn-edit"><i class="fas fa-edit"></i> Edit</a>
+    </div>
+    <%
+            }
+        }
+    %>
+
+    <!-- Add Bank Card -->
+    <div class="bank-card">
+        <a href="<%= request.getContextPath() %>/bankaccount/addbankaccount" class="btn btn-custom btn-edit"><i class="fas fa-plus-circle"></i> Add Bank </a>
+    </div>
+</div>
 
         <!-- Recent Transactions -->
         <div class="section">

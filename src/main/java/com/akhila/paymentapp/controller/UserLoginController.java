@@ -34,7 +34,7 @@ public class UserLoginController {
         UserEntity user = userRepo.findByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
             session.setAttribute("username", user.getUsername());
-            return "dashboard";
+            return "redirect:/dashboard";
         } else {
             model.addAttribute("error", "Invalid credentials");
             return "login";
