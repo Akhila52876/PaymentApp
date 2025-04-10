@@ -111,7 +111,7 @@ public class BankAccountsEntity implements Serializable {
         this.user = user;
     }
 
-    // --- toString for debugging ---
+   
     @Override
     public String toString() {
         return "BankAccountsEntity [bankAccountId=" + bankAccountId 

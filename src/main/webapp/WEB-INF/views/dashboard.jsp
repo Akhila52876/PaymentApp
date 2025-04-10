@@ -1,6 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page import="java.util.*, com.akhila.paymentapp.entities.BankAccountsEntity" %>
+	 <%@ page import="java.util.List" %>
+	<%@ page import="com.akhila.paymentapp.entities.BankAccountsEntity" %>
+	<%@ page import="com.akhila.paymentapp.dtos.UserDetailsDto" %>
+
+    
+    
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,10 +138,18 @@
     </nav>
 
     <div class="container">
-
+		<%
+		UserDetailsDto user = (UserDetailsDto) request.getAttribute("userDto");
+		   
+		%>
         <!-- Welcome Message -->
         <div class="section">
-            <h3>Welcome, <%= session.getAttribute("username") %> 🎉</h3>
+           <!--   <h3>Welcome, <%= session.getAttribute("username") %> 🎉</h3> -->
+		           
+		    <h2>Welcome, <%= user.getFullname() %></h2>
+		    <p>Username: <%= user.getUsername() %></p>
+		    <p>Email: <%= user.getEmail() %></p>
+		    <p>Phone: <%= user.getPhoneNumber() %></p>
         </div>
 
         <!-- Account Details -->
@@ -146,8 +161,8 @@
         </div>
 
        <%
-    List<BankAccountsEntity> accounts = (List<BankAccountsEntity>) request.getAttribute("accounts");
-%>
+           List<BankAccountsEntity> accounts = (List<BankAccountsEntity>) request.getAttribute("accounts");
+       %>
 
 <div class="section bank-section">
     <%
