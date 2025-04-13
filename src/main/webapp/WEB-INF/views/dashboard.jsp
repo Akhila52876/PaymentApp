@@ -1,12 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-	 <%@ page import="java.util.List" %>
-	<%@ page import="com.akhila.paymentapp.entities.BankAccountsEntity" %>
-	<%@ page import="com.akhila.paymentapp.dtos.UserDetailsDto" %>
-
-    
-    
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="com.akhila.paymentapp.entities.BankAccountsEntity" %>
+<%@ page import="com.akhila.paymentapp.dtos.UserDetailsDto" %>
+<%@ page import="com.akhila.paymentapp.entities.TransactionEntity" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 
 <!DOCTYPE html>
 <html>
@@ -14,7 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    
+
     <!-- Bootstrap & FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -25,15 +22,8 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-image:   linear-gradient(45deg, #8b5aed 0%, #78ebfc 100%);
-        /*   background-size: 400% 400%;*/
+            background-image: linear-gradient(45deg, #8b5aed 0%, #78ebfc 100%);
             color: white;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         /* Navbar */
@@ -125,6 +115,30 @@
             background: darkred;
         }
 
+        /* Transaction List Style */
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .transaction-table th, .transaction-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid white;
+        }
+
+        .transaction-table th {
+            background-color: #444;
+        }
+
+        .transaction-table td {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .transaction-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -138,60 +152,114 @@
     </nav>
 
     <div class="container">
-		<%
-		UserDetailsDto user = (UserDetailsDto) request.getAttribute("userDto");
-		   
-		%>
+        <%
+        UserDetailsDto user = (UserDetailsDto) request.getAttribute("userDto");
+        %>
+
         <!-- Welcome Message -->
         <div class="section">
-           <!--   <h3>Welcome, <%= session.getAttribute("username") %> 🎉</h3> -->
-		           
-		    <h2>Welcome, <%= user.getFullname() %></h2>
-		    <p>Username: <%= user.getUsername() %></p>
-		    <p>Email: <%= user.getEmail() %></p>
-		    <p>Phone: <%= user.getPhoneNumber() %></p>
+            <h2>Welcome, <%= user.getFullname() %></h2>
+            <p>Username: <%= user.getUsername() %></p>
+            <p>Email: <%= user.getEmail() %></p>
+            <p>Phone: <%= user.getPhoneNumber() %></p>
         </div>
 
-        <!-- Account Details -->
-        <div class="section">
-            <h4><i class="fas fa-university"></i> Primary Bank Account: 1234</h4>
-            <p><i class="fas fa-dollar-sign"></i> Account Balance: <strong>$90.00</strong></p>
-            <p><i class="fas fa-wallet"></i> Wallet Balance: <strong>$77.00</strong> <a href="#">[+]</a></p>
-            <a href="send_money.jsp" class="btn btn-custom btn-send"><i class="fas fa-paper-plane"></i> Send Money</a>
-        </div>
+        <%
+    BankAccountsEntity primaryAccount = (BankAccountsEntity) request.getAttribute("primaryAccount");
+    Double walletBalance = (Double) request.getAttribute("walletBalance");
+%>
 
-       <%
-           List<BankAccountsEntity> accounts = (List<BankAccountsEntity>) request.getAttribute("accounts");
-       %>
+	<!-- Account Details -->
+	<div class="section">
+	    <h4><i class="fas fa-university"></i> Primary Bank Account: 
+	        <%= primaryAccount != null ? primaryAccount.getBankAccountNo() : "N/A" %>
+	    </h4>
+	    
+	    <p><i class="fas fa-dollar-sign"></i> Account Balance: 
+	        <strong>$<%= primaryAccount != null ? primaryAccount.getCurrentbalance() : "0.00" %></strong>
+	    </p>
+	    
+	    <p><i class="fas fa-wallet"></i> Wallet Balance: 
+	        <strong>$<%= walletBalance != null ? walletBalance : "0.00" %></strong> 
+	        <a href="#">[+]</a>
+	    </p>
+	
+	    <a href="sendmoney" class="btn btn-custom btn-send">
+	        <i class="fas fa-paper-plane"></i> Send Money
+	    </a>
+	</div>
 
-<div class="section bank-section">
-    <%
-        if (accounts != null) {
-            for (BankAccountsEntity account : accounts) {
-    %>
-    <div class="bank-card">
-        <p><strong><i class="fas fa-building"></i> <%= account.getBankName() %></strong></p>
-        <p>Account No: <%= account.getBankAccountNo() %></p>
-        <p>Balance: <%= account.getCurrentbalance() %></p>
-        <p>IFSC Code: <%= account.getIfscCode() %></p>
-        <p>Branch: <%= account.getBranchName() %></p>
-        <a href="editBankAcct.jsp?accountNumber=<%= account.getBankAccountNo() %>" class="btn btn-custom btn-edit"><i class="fas fa-edit"></i> Edit</a>
-    </div>
-    <%
+
+        <%
+        List<BankAccountsEntity> accounts = (List<BankAccountsEntity>) request.getAttribute("accounts");
+        %>
+
+        <div class="section bank-section">
+            <%
+            if (accounts != null) {
+                for (BankAccountsEntity account : accounts) {
+            %>
+            <div class="bank-card">
+                <p><strong><i class="fas fa-building"></i> <%= account.getBankName() %></strong></p>
+                <p>Account No: <%= account.getBankAccountNo() %></p>
+                <p>Balance: <%= account.getCurrentbalance() %></p>
+                <p>IFSC Code: <%= account.getIfscCode() %></p>
+                <p>Branch: <%= account.getBranchName() %></p>
+                <a href="editBankAcct.jsp?accountNumber=<%= account.getBankAccountNo() %>" class="btn btn-custom btn-edit"><i class="fas fa-edit"></i> Edit</a>
+            </div>
+            <%
+                }
             }
-        }
-    %>
+            %>
 
-    <!-- Add Bank Card -->
-    <div class="bank-card">
-        <a href="<%= request.getContextPath() %>/bankaccount/addbankaccount" class="btn btn-custom btn-edit"><i class="fas fa-plus-circle"></i> Add Bank </a>
-    </div>
-</div>
+            <!-- Add Bank Card -->
+            <div class="bank-card">
+                <a href="<%= request.getContextPath() %>/bankaccount/addbankaccount" class="btn btn-custom btn-edit"><i class="fas fa-plus-circle"></i> Add Bank </a>
+            </div>
+        </div>
 
         <!-- Recent Transactions -->
         <div class="section">
             <h4><i class="fas fa-list"></i> Recent Transactions</h4>
-            <a href="pagination.jsp" class="btn btn-custom btn-send"><i class="fas fa-file-alt"></i> View Statement</a>
+
+            <!-- Transaction Table -->
+            <table class="transaction-table">
+                <tr>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Amount</th>
+                    <th>Transaction Type</th>
+                    <th>Date</th>
+                </tr>
+
+                <%
+                List<TransactionEntity> transactions = (List<TransactionEntity>) request.getAttribute("transactions");
+                if (transactions != null) {
+                    int count = 0;
+                    for (TransactionEntity transaction : transactions) {
+                        if (count == 3) break; // Only show the last 3 transactions
+                %>
+                <tr>
+                    <td><%= transaction.getSender().getUsername() %></td>
+                    <td><%= transaction.getReceiver().getUsername() %></td>
+                    <td><%= transaction.getAmount() %></td>
+                    <td><%= transaction.getTransactionType() %></td>
+                    <td><%= transaction.getTimestamp() %></td>
+                </tr>
+                <%
+                        count++;
+                    }
+                }
+                %>
+            </table>
+
+            <!-- View More Button -->
+		         <div class="text-center mt-3">
+		    <a href="transactions" class="btn btn-lg btn-warning text-dark fw-bold">
+		        <i class="fas fa-file-alt me-2"></i> View Full Transaction History
+		    </a>
+		</div>
+
         </div>
 
     </div>

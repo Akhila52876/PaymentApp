@@ -1,47 +1,91 @@
 package com.akhila.paymentapp.entities;
 
-import java.sql.Timestamp;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@Table(name="txn_details")
-
+@Table(name = "transactions")
 public class TransactionEntity {
 
-	
-		@Id
-		@GeneratedValue(strategy=GenerationType.IDENTITY)
-		@Column(name="txn_id")
-		private int transactionid;
-		@Column(name="txn_date_time")
-		private Timestamp datetime;
-		@Column(name="source_id")
-		private String sourseid;
-		@Column(name="dest_id")
-		private String destid;
-		@Column(name="source_type")
-		private String soursetype;
-		@Column(name="dest_type")
-		private String desttype;
-		@Column(name="txn_amount")
-		private String transactionamount;
-		
-		@Override
-		public String toString() {
-			return "TransactionEntity [transactionid=" + transactionid + ", datetime=" + datetime + ", sourseid=" + sourseid
-					+ ", destid=" + destid + ", soursetype=" + soursetype + ", desttype=" + desttype
-					+ ", transactionamount=" + transactionamount + "]";
-		}
-		
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "transaction_id") 
+	private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "sender_user_id", referencedColumnName = "user_id")
+    private UserEntity sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_user_id", referencedColumnName = "user_id")
+    private UserEntity receiver;
+
+    @Column(name = "amount")
+    private Double amount;
+
+    @Column(name = "type")
+    private String type;  // "WALLET" or "BANK"
+
+    @Column(name = "transaction_type")
+    private String transactionType;  // "DEBIT" or "CREDIT"
+
+    @Column(name = "timestamp")
+    private LocalDateTime timestamp;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public UserEntity getSender() {
+        return sender;
+    }
+
+    public void setSender(UserEntity sender) {
+        this.sender = sender;
+    }
+
+    public UserEntity getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(UserEntity receiver) {
+        this.receiver = receiver;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+}

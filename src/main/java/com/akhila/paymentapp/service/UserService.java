@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 
 import com.akhila.paymentapp.dtos.UserDetailsDto;
 import com.akhila.paymentapp.entities.UserEntity;
+import com.akhila.paymentapp.entities.WalletEntity;
 import com.akhila.paymentapp.repositories.UserRepository;
+import com.akhila.paymentapp.repositories.WalletRepository;
 
 @Service
 public class UserService {
@@ -13,8 +15,22 @@ public class UserService {
     @Autowired
          public UserRepository userRepository;
     
+    @Autowired
+    private WalletRepository walletRepo;
+    
     public void createUser(UserEntity user) {
-        userRepository.save(user);
+        UserEntity savedUser = userRepository.save(user);  // Fix: Store the saved user
+
+        WalletEntity existingWallet = walletRepo.findByUser(savedUser);
+        if (existingWallet == null) {
+            WalletEntity wallet = new WalletEntity();
+            wallet.setUser(savedUser);
+            wallet.setBalance(0.0);
+            walletRepo.save(wallet);
+            System.out.println("✅ Wallet auto-created for user: " + savedUser.getUsername());
+        } else {
+            System.out.println("ℹ️ Wallet already exists for user: " + savedUser.getUsername());
+        }
     }
     
     public UserEntity validateLogin(String username,String password)

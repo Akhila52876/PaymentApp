@@ -14,6 +14,8 @@ public interface BankAccountRepository extends JpaRepository<BankAccountsEntity,
     // Custom query to get all bank accounts for a specific user
     List<BankAccountsEntity> findByUser(UserEntity user);
     List<BankAccountsEntity> findByUser_Username(String username);
+	 BankAccountsEntity findByBankAccountNo(String bankAccountNo);
+	 
 
 
 }

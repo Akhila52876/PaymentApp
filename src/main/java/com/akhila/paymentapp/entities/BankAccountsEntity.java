@@ -19,8 +19,10 @@ public class BankAccountsEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bank_account_id")
     private int bankAccountId;
+    
+   
 
-    @Column(name = "bank_account_no", nullable = false)
+    @Column(name = "bank_account_no", unique=true)
     private String bankAccountNo;
 
     @Column(name = "ifsc", nullable = false)
