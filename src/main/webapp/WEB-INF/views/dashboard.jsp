@@ -179,11 +179,12 @@
 	        <strong>$<%= primaryAccount != null ? primaryAccount.getCurrentbalance() : "0.00" %></strong>
 	    </p>
 	    
-	    <p><i class="fas fa-wallet"></i> Wallet Balance: 
-	        <strong>$<%= walletBalance != null ? walletBalance : "0.00" %></strong> 
-	        <a href="#">[+]</a>
-	    </p>
-	
+		 <p><i class="fas fa-wallet"></i> Wallet Balance: 
+		 <strong>$<%= walletBalance %></strong>
+
+		   <a href="#">[+]</a> 
+	   </p>
+
 	    <a href="sendmoney" class="btn btn-custom btn-send">
 	        <i class="fas fa-paper-plane"></i> Send Money
 	    </a>
@@ -229,7 +230,8 @@
                     <th>Receiver</th>
                     <th>Amount</th>
                     <th>Transaction Type</th>
-                    <th>Date</th>
+                    <th>Nature</th>
+                    <th>Date&Time</th>
                 </tr>
 
                 <%
@@ -244,6 +246,7 @@
                     <td><%= transaction.getReceiver().getUsername() %></td>
                     <td><%= transaction.getAmount() %></td>
                     <td><%= transaction.getTransactionType() %></td>
+                    <td><%= transaction.getTransactionNature() %>
                     <td><%= transaction.getTimestamp() %></td>
                 </tr>
                 <%

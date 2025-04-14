@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -41,6 +41,7 @@
                     <th>Amount</th>
                     <th>Type</th>
                     <th>Transaction Type</th>
+                    <th>Nature</th>
                     <th>Timestamp</th>
                 </tr>
             </thead>
@@ -57,6 +58,7 @@
                         </td>
                         <td>${txn.type}</td>
                         <td>${txn.transactionType}</td>
+                        <td>${txn.transactionNature}</td>
                         <td>${txn.timestamp}</td>
                     </tr>
                 </c:forEach>
@@ -67,12 +69,11 @@
     <c:if test="${empty transactions}">
         <p style="text-align:center;">No transactions found.</p>
     </c:if>
-    
-    
-		<!-- Back to Dashboard Button -->
-		<div style="text-align: center; margin-top: 20px;">
-		    <a href="/dashboard" style="text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px;">Back to Dashboard</a>
-		</div>
+
+    <!-- Back to Dashboard Button -->
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/dashboard" style="text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px;">Back to Dashboard</a>
+    </div>
 
 </body>
 </html>

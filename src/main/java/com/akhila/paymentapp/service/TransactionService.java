@@ -40,21 +40,21 @@ public class TransactionService {
         }
 
         double amount = dto.getAmount();
-        String type = dto.getDestinationType().toUpperCase();
+        String destinationType = dto.getDestinationType().toUpperCase();
 
-        switch (type) {
+        switch (destinationType) {
             case "BANK":
                 return handleBankToBank(dto, sender, receiver, amount);
-            case "WALLET":
-                if (dto.getSenderAccountNumber() != null && !dto.getSenderAccountNumber().isEmpty()) {
-                    return handleBankToWallet(dto, sender, receiver, amount);
-                } else {
-                    return handleWalletToBank(dto, sender, receiver, amount);
-                }
+            case "BANK_TO_WALLET":
+                return handleBankToWallet(dto, sender, receiver, amount);
+            case "WALLET_TO_BANK":
+                return handleWalletToBank(dto, sender, receiver, amount);
             default:
-                System.out.println("❌ Unsupported transaction type.");
+                System.out.println("❌ Unsupported transaction type: " + destinationType);
                 return false;
         }
+
+
     }
 
     private boolean handleBankToBank(SendMoneyDTO dto, UserEntity sender, UserEntity receiver, double amount) {
@@ -76,16 +76,17 @@ public class TransactionService {
 
         bankAccountRepo.save(senderBank);
         bankAccountRepo.save(receiverBank);
-
-        saveTransaction(sender, receiver, amount, "BANK", "DEBIT");
-        saveTransaction(sender, receiver, amount, "BANK", "CREDIT");
+        
+        saveTransaction(sender, receiver, amount, "BANK", "DEBIT", "Bank to Bank: Sent to " + receiver.getUsername());
+        saveTransaction(sender, receiver, amount, "BANK", "CREDIT", "Bank to Bank: Received from " + sender.getUsername());
 
         System.out.println("✅ Bank to Bank transfer complete.");
         return true;
     }
 
     private boolean handleBankToWallet(SendMoneyDTO dto, UserEntity sender, UserEntity receiver, double amount) {
-        BankAccountsEntity senderBank = bankAccountRepo.findByBankAccountNo(dto.getSenderAccountNumber());
+        
+    	BankAccountsEntity senderBank = bankAccountRepo.findByBankAccountNo(dto.getSenderAccountNumber());
         WalletEntity receiverWallet = walletRepo.findByUser(receiver);
 
         if (senderBank == null || receiverWallet == null) {
@@ -104,8 +105,9 @@ public class TransactionService {
         bankAccountRepo.save(senderBank);
         walletRepo.save(receiverWallet);
 
-        saveTransaction(sender, receiver, amount, "BANK", "DEBIT");
-        saveTransaction(sender, receiver, amount, "WALLET", "CREDIT");
+        saveTransaction(sender, receiver, amount, "BANK", "DEBIT", "Bank to Wallet: Sent to " + receiver.getUsername());
+        saveTransaction(sender, receiver, amount, "WALLET", "CREDIT", "Bank to Wallet: Received from " + sender.getUsername());
+
 
         System.out.println("✅ Bank to Wallet transfer complete.");
         return true;
@@ -131,21 +133,37 @@ public class TransactionService {
         walletRepo.save(senderWallet);
         bankAccountRepo.save(receiverBank);
 
-        saveTransaction(sender, receiver, amount, "WALLET", "DEBIT");
-        saveTransaction(sender, receiver, amount, "BANK", "CREDIT");
+        saveTransaction(sender, receiver, amount, "WALLET", "DEBIT", "Wallet to Bank: Sent to " + receiver.getUsername());
+        saveTransaction(sender, receiver, amount, "BANK", "CREDIT", "Wallet to Bank: Received from " + sender.getUsername());
+
 
         System.out.println("✅ Wallet to Bank transfer complete.");
         return true;
     }
 
-    private void saveTransaction(UserEntity sender, UserEntity receiver, double amount, String type, String transactionType) {
+
+	private void saveTransaction(UserEntity sender, UserEntity receiver, double amount, String type, String transactionType,String nature) {
         TransactionEntity transaction = new TransactionEntity();
         transaction.setSender(sender);
         transaction.setReceiver(receiver);
         transaction.setAmount(amount);
         transaction.setType(type);
         transaction.setTransactionType(transactionType);
+        transaction.setTransactionNature(nature);
         transaction.setTimestamp(LocalDateTime.now());
+        
+        
+//        if (type.equalsIgnoreCase("BANK") && transactionType.equalsIgnoreCase("DEBIT")) {
+//            nature = "Bank to Bank";
+//        } else if (type.equalsIgnoreCase("WALLET") && transactionType.equalsIgnoreCase("CREDIT")) {
+//            nature = "Bank to Wallet";
+//        } else if (type.equalsIgnoreCase("WALLET") && transactionType.equalsIgnoreCase("DEBIT")) {
+//            nature = "Wallet to Bank";
+//        } else {
+//            nature = "Unknown";
+//        }
+
+      
 
         transactionRepo.save(transaction);
         System.out.println("💾 Saved " + transactionType + " transaction (" + type + ") for " + amount);
@@ -182,6 +200,7 @@ public class TransactionService {
         debitTransaction.setAmount(dto.getAmount());
         debitTransaction.setType("BANK"); // or dto.getType()
         debitTransaction.setTransactionType("DEBIT");
+        debitTransaction.setTransactionNature("TRANSFER");
         debitTransaction.setTimestamp(LocalDateTime.now());
 
         TransactionEntity creditTransaction = new TransactionEntity();
@@ -190,6 +209,7 @@ public class TransactionService {
         creditTransaction.setAmount(dto.getAmount());
         creditTransaction.setType("BANK");
         creditTransaction.setTransactionType("CREDIT");
+        creditTransaction.setTransactionNature("TRANSFER");
         creditTransaction.setTimestamp(LocalDateTime.now());
 
         transactionRepo.save(debitTransaction);

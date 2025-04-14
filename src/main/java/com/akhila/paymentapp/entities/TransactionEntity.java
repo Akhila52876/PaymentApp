@@ -31,6 +31,18 @@ public class TransactionEntity {
 
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
+    
+    @Column(name = "transaction_nature")
+    private String transactionNature;
+
+    public String getTransactionNature() {
+        return transactionNature;
+    }
+
+    public void setTransactionNature(String transactionNature) {
+        this.transactionNature = transactionNature;
+    }
+
 
     // Getters and Setters
     public Long getId() {

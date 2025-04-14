@@ -10,7 +10,7 @@ public class SendMoneyDTO {
 
     private double amount;
 
-    private String Destinationtype; // "BANK" or "WALLET" - overall source
+    private String destinationType; // "BANK" or "WALLET" - overall source
    
 
     public String getSenderUsername() {
@@ -54,11 +54,11 @@ public class SendMoneyDTO {
     }
 
     public String getDestinationType() {
-        return Destinationtype;
+        return destinationType;
     }
 
-    public void setType(String type) {
-        this.Destinationtype = type;
+    public void setDestinationType(String destinationType) {
+        this.destinationType = destinationType;
     }
 
    
